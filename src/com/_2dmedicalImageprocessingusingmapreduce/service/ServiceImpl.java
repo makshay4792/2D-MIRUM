@@ -7,6 +7,7 @@ package com._2dmedicalImageprocessingusingmapreduce.service;
 
 import com._2dmedicalImageprocessingusingmapreduce.admin.AdminLoadImages;
 import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -40,6 +41,28 @@ public class ServiceImpl implements Service {
         g.dispose();
         LOGGER.info("Image Resized....");
         return resizedImage;
+    }
+
+    @Override
+    public String getVector(BufferedImage bufferedImage) {
+        int vector[] = new int[16];
+        Color c=new Color(0);
+        int r,g,b,gs;
+        String vect="";
+            for (int y = 0; y < 256; y++) {
+                for (int x = 0; x < 256; x++) {
+                    c = new Color(bufferedImage.getRGB(x, y));
+                    r=c.getRed();
+                    g=c.getGreen();
+                    b=c.getBlue();
+                    gs=(r+g+b)/3;
+                    vector[gs/16]++;
+                }
+            }
+            for(int i=0;i<vector.length;i++){
+                vect+=vector[i]+" ";
+            }
+        return vect.trim();
     }
 
 }

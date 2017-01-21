@@ -8,6 +8,7 @@ package com._2dmedicalImageprocessingusingmapreduce.admin;
 import com._2dmedicalImageprocessingusingmapreduce.service.ServiceImpl;
 import java.awt.Container;
 import java.awt.FileDialog;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Toolkit;
@@ -38,7 +39,6 @@ public class AdminLoadImages extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlImageDetails = new javax.swing.JPanel();
-        txtVector = new javax.swing.JLabel();
         lblType = new javax.swing.JLabel();
         lblTreatment = new javax.swing.JLabel();
         cmbType = new javax.swing.JComboBox<>();
@@ -46,6 +46,8 @@ public class AdminLoadImages extends javax.swing.JFrame {
         btnSave = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
         lblVector = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtVector = new javax.swing.JTextArea();
         pnlImage = new javax.swing.JPanel();
         lblImage = new javax.swing.JLabel();
         btnLoadImage = new javax.swing.JButton();
@@ -55,10 +57,6 @@ public class AdminLoadImages extends javax.swing.JFrame {
         setTitle("Admin");
 
         pnlImageDetails.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        txtVector.setBackground(new java.awt.Color(0, 0, 0));
-        txtVector.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        txtVector.setOpaque(true);
 
         lblType.setText("Type :");
 
@@ -74,14 +72,24 @@ public class AdminLoadImages extends javax.swing.JFrame {
 
         lblVector.setText("Vector");
 
+        txtVector.setBackground(new java.awt.Color(0, 0, 0));
+        txtVector.setColumns(20);
+        txtVector.setForeground(new java.awt.Color(255, 0, 0));
+        txtVector.setLineWrap(true);
+        txtVector.setRows(5);
+        jScrollPane1.setViewportView(txtVector);
+
         javax.swing.GroupLayout pnlImageDetailsLayout = new javax.swing.GroupLayout(pnlImageDetails);
         pnlImageDetails.setLayout(pnlImageDetailsLayout);
         pnlImageDetailsLayout.setHorizontalGroup(
             pnlImageDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlImageDetailsLayout.createSequentialGroup()
+                .addGap(139, 139, 139)
+                .addComponent(lblVector)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(pnlImageDetailsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlImageDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtVector, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pnlImageDetailsLayout.createSequentialGroup()
                         .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
@@ -93,19 +101,16 @@ public class AdminLoadImages extends javax.swing.JFrame {
                     .addGroup(pnlImageDetailsLayout.createSequentialGroup()
                         .addComponent(lblType)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(cmbType, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cmbType, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
-            .addGroup(pnlImageDetailsLayout.createSequentialGroup()
-                .addGap(139, 139, 139)
-                .addComponent(lblVector)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlImageDetailsLayout.setVerticalGroup(
             pnlImageDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlImageDetailsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(txtVector, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(lblVector)
                 .addGap(23, 23, 23)
                 .addGroup(pnlImageDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -181,10 +186,17 @@ public class AdminLoadImages extends javax.swing.JFrame {
             mediaTracker.waitForID(0);
             LOGGER.info("Input Image Read from "+filePath);
             BufferedImage  bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2dO = bufferedImage.createGraphics();
+            g2dO.drawImage(image, 0, 0, image.getWidth(null), image.getHeight(null), null);
             bufferedImage=new ServiceImpl().resizeImage(bufferedImage, 256, 256);
             lblImage.setIcon(new ImageIcon(bufferedImage));
+            String vector =new ServiceImpl().getVector(bufferedImage);
+            LOGGER.info("Image Vector: "+vector);
+            txtVector.setText(vector);
         } catch (InterruptedException ex) {
             Logger.getLogger(AdminLoadImages.class.getName()).log(Level.SEVERE, null, ex);
+        }catch(IllegalArgumentException ex){
+            LOGGER.log(Level.SEVERE,"Image Not Loaded");
         }
     }//GEN-LAST:event_btnLoadImageActionPerformed
 
@@ -230,12 +242,13 @@ public class AdminLoadImages extends javax.swing.JFrame {
     private javax.swing.JButton btnSave;
     private javax.swing.JComboBox<String> cmbTreatment;
     private javax.swing.JComboBox<String> cmbType;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblImage;
     private javax.swing.JLabel lblTreatment;
     private javax.swing.JLabel lblType;
     private javax.swing.JLabel lblVector;
     private javax.swing.JPanel pnlImage;
     private javax.swing.JPanel pnlImageDetails;
-    private javax.swing.JLabel txtVector;
+    private javax.swing.JTextArea txtVector;
     // End of variables declaration//GEN-END:variables
 }
