@@ -74,7 +74,7 @@ public class AdminLoadImages extends javax.swing.JFrame {
 
         txtVector.setBackground(new java.awt.Color(0, 0, 0));
         txtVector.setColumns(20);
-        txtVector.setForeground(new java.awt.Color(255, 0, 0));
+        txtVector.setForeground(new java.awt.Color(245, 231, 231));
         txtVector.setLineWrap(true);
         txtVector.setRows(5);
         jScrollPane1.setViewportView(txtVector);
