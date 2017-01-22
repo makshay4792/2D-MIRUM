@@ -90,6 +90,7 @@ public class AdminLoadImages extends javax.swing.JFrame {
 
         lblVector.setText("Vector");
 
+        txtVector.setEditable(false);
         txtVector.setBackground(new java.awt.Color(0, 0, 0));
         txtVector.setColumns(20);
         txtVector.setForeground(new java.awt.Color(245, 231, 231));
