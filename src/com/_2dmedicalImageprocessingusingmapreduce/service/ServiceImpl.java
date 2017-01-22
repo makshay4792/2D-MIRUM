@@ -11,6 +11,13 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -46,23 +53,40 @@ public class ServiceImpl implements Service {
     @Override
     public String getVector(BufferedImage bufferedImage) {
         int vector[] = new int[16];
-        Color c=new Color(0);
-        int r,g,b,gs;
-        String vect="";
-            for (int y = 0; y < 256; y++) {
-                for (int x = 0; x < 256; x++) {
-                    c = new Color(bufferedImage.getRGB(x, y));
-                    r=c.getRed();
-                    g=c.getGreen();
-                    b=c.getBlue();
-                    gs=(r+g+b)/3;
-                    vector[gs/16]++;
-                }
+        Color c = new Color(0);
+        int r, g, b, gs;
+        String vect = "";
+        for (int y = 0; y < bufferedImage.getWidth(); y++) {
+            for (int x = 0; x < bufferedImage.getHeight(); x++) {
+                c = new Color(bufferedImage.getRGB(x, y));
+                r = c.getRed();
+                g = c.getGreen();
+                b = c.getBlue();
+                gs = (r + g + b) / 3;
+                vector[gs / 16]++;
             }
-            for(int i=0;i<vector.length;i++){
-                vect+=vector[i]+" ";
-            }
+        }
+        for (int i = 0; i < vector.length; i++) {
+            vect += vector[i] + " ";
+        }
         return vect.trim();
+    }
+
+    @Override
+    public Properties getProperties(String propFileName) {
+        Properties prop = new Properties();
+         //getClass().getClassLoader().getResourceAsStream("/home/akshay/NetBeansProjects/2DMedicalImageProcessingUsingMapReduce/src/resource/2d-mirum.properties");
+        try {
+            InputStream inputStream = new FileInputStream(new File("./src/resource/2d-mirum.properties"));
+            if (inputStream != null) {
+                prop.load(inputStream);
+            } else {
+                throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return prop;
     }
 
 }

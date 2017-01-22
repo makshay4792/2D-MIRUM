@@ -6,6 +6,7 @@
 package com._2dmedicalImageprocessingusingmapreduce.service;
 
 import java.awt.image.BufferedImage;
+import java.util.Properties;
 
 /**
  *
@@ -34,4 +35,15 @@ public interface Service {
      * @return String           vector in String form
      */
     public String getVector(BufferedImage bufferedImage);
+    
+     /**
+     * This method takes properties file name as input
+     * and returns its object so that we can read from
+     * properties file
+     * 
+     * @parameters              String
+     * @param fileName          properties file name
+     * @return Properties       properties object
+     */
+    public Properties getProperties(String fileName);
 }

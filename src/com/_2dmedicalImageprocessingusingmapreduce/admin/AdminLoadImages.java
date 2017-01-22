@@ -5,6 +5,7 @@
  */
 package com._2dmedicalImageprocessingusingmapreduce.admin;
 
+import com._2dmedicalImageprocessingusingmapreduce.pojo.Images;
 import com._2dmedicalImageprocessingusingmapreduce.service.ServiceImpl;
 import java.awt.Container;
 import java.awt.FileDialog;
@@ -13,6 +14,11 @@ import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -24,8 +30,10 @@ import javax.swing.ImageIcon;
 public class AdminLoadImages extends javax.swing.JFrame {
 
     private static final Logger LOGGER = Logger.getLogger(AdminLoadImages.class.getName());
+    Images images;
 
     public AdminLoadImages() {
+        images=new Images();
         initComponents();
     }
 
@@ -67,8 +75,18 @@ public class AdminLoadImages extends javax.swing.JFrame {
         cmbTreatment.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "No Treatment", "Surgary", "Radiotherapy", "Chemotherapy" }));
 
         btnSave.setText("S a v e");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
 
         btnCancel.setText("C a n c e l");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
 
         lblVector.setText("Vector");
 
@@ -109,7 +127,7 @@ public class AdminLoadImages extends javax.swing.JFrame {
             pnlImageDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlImageDetailsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(lblVector)
                 .addGap(23, 23, 23)
@@ -152,7 +170,7 @@ public class AdminLoadImages extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(pnlImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblImage, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnLoadToHdfs, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+                    .addComponent(btnLoadToHdfs, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
                     .addComponent(btnLoadImage, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -160,7 +178,7 @@ public class AdminLoadImages extends javax.swing.JFrame {
             pnlImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlImageLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblImage, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+                .addComponent(lblImage, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnLoadImage)
                 .addGap(18, 18, 18)
@@ -185,6 +203,7 @@ public class AdminLoadImages extends javax.swing.JFrame {
             mediaTracker.addImage(image, 0);
             mediaTracker.waitForID(0);
             LOGGER.info("Input Image Read from "+filePath);
+            images.setPath(filePath);
             BufferedImage  bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
             Graphics2D g2dO = bufferedImage.createGraphics();
             g2dO.drawImage(image, 0, 0, image.getWidth(null), image.getHeight(null), null);
@@ -192,6 +211,7 @@ public class AdminLoadImages extends javax.swing.JFrame {
             lblImage.setIcon(new ImageIcon(bufferedImage));
             String vector =new ServiceImpl().getVector(bufferedImage);
             LOGGER.info("Image Vector: "+vector);
+            images.setVector(vector);
             txtVector.setText(vector);
         } catch (InterruptedException ex) {
             Logger.getLogger(AdminLoadImages.class.getName()).log(Level.SEVERE, null, ex);
@@ -199,6 +219,26 @@ public class AdminLoadImages extends javax.swing.JFrame {
             LOGGER.log(Level.SEVERE,"Image Not Loaded");
         }
     }//GEN-LAST:event_btnLoadImageActionPerformed
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        Properties properties=new ServiceImpl().getProperties("2d-mirum.properties");
+        images.setType(cmbType.getSelectedItem().toString());
+        images.setTreatment(cmbTreatment.getSelectedItem().toString());
+        try{
+        BufferedWriter bw = new BufferedWriter(new FileWriter(new File(properties.getProperty("localDump").toString()), true));
+            bw.write(""+images.getVector()+"\t"+images.getType()+"\t"+images.getTreatment()+"\t"+images.getPath()+"\n");
+            bw.close();
+            LOGGER.info("Record Added to File: "+images.getVector()+"\t"+images.getType()+"\t"+images.getTreatment()+"\t"+images.getPath());
+        }catch(IOException ex){
+            LOGGER.log(Level.SEVERE,"File Not Found");
+        }
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        txtVector.setText("");
+        cmbType.setSelectedIndex(0);
+        cmbTreatment.setSelectedIndex(0);
+    }//GEN-LAST:event_btnCancelActionPerformed
 
     /**
      * @param args the command line arguments
