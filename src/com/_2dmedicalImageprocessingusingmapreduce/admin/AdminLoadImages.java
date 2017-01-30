@@ -72,7 +72,7 @@ public class AdminLoadImages extends javax.swing.JFrame {
 
         cmbType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Normal", "Stage 1", "Stage 2", "Stage 3" }));
 
-        cmbTreatment.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "No Treatment", "Surgary", "Radiotherapy", "Chemotherapy" }));
+        cmbTreatment.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "No_Treatment", "Surgary", "Radiotherapy", "Chemotherapy" }));
 
         btnSave.setText("S a v e");
         btnSave.addActionListener(new java.awt.event.ActionListener() {
@@ -162,6 +162,11 @@ public class AdminLoadImages extends javax.swing.JFrame {
         });
 
         btnLoadToHdfs.setText("L o a d           T o           H D F S");
+        btnLoadToHdfs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoadToHdfsActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlImageLayout = new javax.swing.GroupLayout(pnlImage);
         pnlImage.setLayout(pnlImageLayout);
@@ -240,6 +245,10 @@ public class AdminLoadImages extends javax.swing.JFrame {
         cmbType.setSelectedIndex(0);
         cmbTreatment.setSelectedIndex(0);
     }//GEN-LAST:event_btnCancelActionPerformed
+
+    private void btnLoadToHdfsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadToHdfsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnLoadToHdfsActionPerformed
 
     /**
      * @param args the command line arguments

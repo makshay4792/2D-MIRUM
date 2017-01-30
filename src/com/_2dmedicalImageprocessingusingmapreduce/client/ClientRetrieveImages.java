@@ -15,6 +15,11 @@ import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -31,7 +36,7 @@ public class ClientRetrieveImages extends javax.swing.JFrame {
      * Creates new form ClientRetrieveImages
      */
     public ClientRetrieveImages() {
-        images=new Images();
+        images = new Images();
         initComponents();
     }
 
@@ -276,21 +281,31 @@ public class ClientRetrieveImages extends javax.swing.JFrame {
             MediaTracker mediaTracker = new MediaTracker(new Container());
             mediaTracker.addImage(image, 0);
             mediaTracker.waitForID(0);
-            LOGGER.info("Input Image Read from "+filePath);
+            LOGGER.info("Input Image Read from " + filePath);
             images.setPath(filePath);
-            BufferedImage  bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+            BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
             Graphics2D g2dO = bufferedImage.createGraphics();
             g2dO.drawImage(image, 0, 0, image.getWidth(null), image.getHeight(null), null);
-            bufferedImage=new ServiceImpl().resizeImage(bufferedImage, 256, 256);
+            bufferedImage = new ServiceImpl().resizeImage(bufferedImage, 256, 256);
             lblInputImage.setIcon(new ImageIcon(bufferedImage));
-            String vector =new ServiceImpl().getVector(bufferedImage);
-            LOGGER.info("Image Vector: "+vector);
+            String vector = new ServiceImpl().getVector(bufferedImage);
+            LOGGER.info("Image Vector: " + vector);
             images.setVector(vector);
             txtVector.setText(vector);
+
+            Properties properties = new ServiceImpl().getProperties("2d-mirum.properties");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(properties.getProperty("localQueryImage").toString())));
+            bw.write("" + images.getVector());
+            
+            bw.close();
+            LOGGER.info("Record Added to File: " + images.getVector());
+
         } catch (InterruptedException ex) {
             Logger.getLogger(AdminLoadImages.class.getName()).log(Level.SEVERE, null, ex);
-        }catch(IllegalArgumentException ex){
-            LOGGER.log(Level.SEVERE,"Image Not Loaded");
+        } catch (IllegalArgumentException ex) {
+            LOGGER.log(Level.SEVERE, "Image Not Loaded");
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "File Not Found");
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
